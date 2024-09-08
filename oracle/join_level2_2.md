@@ -1,36 +1,39 @@
 # 조건에 맞는 도서와 저자 리스트 출력하기
 
 ## 문제 설명
-다음은 어느 한 서점에서 판매중인 도서들의 도서 정보(BOOK), 저자 정보(AUTHOR) 테이블입니다.
+다음은 어느 의류 쇼핑몰에서 판매중인 상품들의 상품 정보를 담은 PRODUCT 테이블과 오프라인 상품 판매 정보를 담은 OFFLINE_SALE 테이블 입니다. PRODUCT 테이블은 아래와 같은 구조로 PRODUCT_ID, PRODUCT_CODE, PRICE는 각각 상품 ID, 상품코드, 판매가를 나타냅니다.
 
-BOOK 테이블은 각 도서의 정보를 담은 테이블로 아래와 같은 구조로 되어있습니다.
+| Column name   | Type        | Nullable | Description         |
+|---------------|-------------|----------|---------------------|
+| PRODUCT_ID    | INTEGER     | FALSE    | 상품 ID              |
+| PRODUCT_CODE  | VARCHAR(8)  | FALSE    | 8자리 상품코드 (중복 불가, 앞 2자리는 카테고리 코드) |
+| PRICE         | INTEGER     | FALSE    | 판매가               |
 
-| Column name    | Type         | Nullable | Description                  |
-|----------------|--------------|----------|------------------------------|
-| BOOK_ID        | INTEGER      | FALSE    | 도서 ID                      |
-| CATEGORY       | VARCHAR(N)   | FALSE    | 카테고리 (경제, 인문, 소설, 생활, 기술) |
-| AUTHOR_ID      | INTEGER      | FALSE    | 저자 ID                      |
-| PRICE          | INTEGER      | FALSE    | 판매가 (원)                   |
-| PUBLISHED_DATE | DATE         | FALSE    | 출판일                       |
 
-AUTHOR 테이블은 도서의 저자의 정보를 담은 테이블로 아래와 같은 구조로 되어있습니다.
+상품 별로 중복되지 않는 8자리 상품코드 값을 가지며, 앞 2자리는 카테고리 코드를 의미합니다.
 
-| Column name  | Type       | Nullable | Description |
-|--------------|------------|----------|-------------|
-| AUTHOR_ID    | INTEGER    | FALSE    | 저자 ID     |
-| AUTHOR_NAME  | VARCHAR(N) | FALSE    | 저자 이름   |
+OFFLINE_SALE 테이블은 아래와 같은 구조로 되어있으며 OFFLINE_SALE_ID, PRODUCT_ID, SALES_AMOUNT, SALES_DATE는 각각 오프라인 상품 판매 ID, 상품 ID, 판매량, 판매일을 나타냅니다.
 
+| Column name      | Type    | Nullable | Description                |
+|------------------|---------|----------|----------------------------|
+| OFFLINE_SALE_ID   | INTEGER | FALSE    | 오프라인 상품 판매 ID       |
+| PRODUCT_ID        | INTEGER | FALSE    | 상품 ID                    |
+| SALES_AMOUNT      | INTEGER | FALSE    | 판매량                     |
+| SALES_DATE        | DATE    | FALSE    | 판매일                     |
+
+
+동일한 날짜, 상품 ID 조합에 대해서는 하나의 판매 데이터만 존재합니다.
 
 ## 문제
-'경제' 카테고리에 속하는 도서들의 도서 ID(BOOK_ID), 저자명(AUTHOR_NAME), 출판일(PUBLISHED_DATE) 리스트를 출력하는 SQL문을 작성해주세요.
-결과는 출판일을 기준으로 오름차순 정렬해주세요.
+PRODUCT 테이블과 OFFLINE_SALE 테이블에서 상품코드 별 매출액(판매가 * 판매량) 합계를 출력하는 SQL문을 작성해주세요. 결과는 매출액을 기준으로 내림차순 정렬해주시고 매출액이 같다면 상품코드를 기준으로 오름차순 정렬해주세요.
+
 
 
 
 ```oracle
-SELECT b.book_id, a.author_name, TO_CHAR(b.published_date, 'YYYY-MM-DD')
-FROM book b
-         JOIN author a ON b.author_id = a.author_id
-WHERE b.category = '경제'
-ORDER BY b.published_date
+SELECT a.product_code, sum(a.price * b.sales_amount) as 매출액
+FROM product a
+         JOIN offline_sale b ON a.product_id = b.product_id
+GROUP BY a.product_code
+ORDER BY 매출액 DESC, a.product_code
 ```
