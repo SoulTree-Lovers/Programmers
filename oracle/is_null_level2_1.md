@@ -1,25 +1,29 @@
-# 입양 시각 구하기(1)
+# NULL 처리하기
 
 ## 문제 설명
-ANIMAL_OUTS 테이블은 동물 보호소에서 입양 보낸 동물의 정보를 담은 테이블입니다. ANIMAL_OUTS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, NAME, SEX_UPON_OUTCOME는 각각 동물의 아이디, 생물 종, 입양일, 이름, 성별 및 중성화 여부를 나타냅니다.
+ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
 
-NAME	TYPE	NULLABLE
-ANIMAL_ID	VARCHAR(N)	FALSE
-ANIMAL_TYPE	VARCHAR(N)	FALSE
-DATETIME	DATETIME	FALSE
-NAME	VARCHAR(N)	TRUE
-SEX_UPON_OUTCOME	VARCHAR(N)	FALSE
+| NAME             | TYPE        | NULLABLE |
+|------------------|-------------|----------|
+| ANIMAL_ID        | VARCHAR(N)  | FALSE    |
+| ANIMAL_TYPE      | VARCHAR(N)  | FALSE    |
+| DATETIME         | DATETIME    | FALSE    |
+| INTAKE_CONDITION | VARCHAR(N)  | FALSE    |
+| NAME             | VARCHAR(N)  | TRUE     |
+| SEX_UPON_INTAKE  | VARCHAR(N)  | FALSE    |
+
+
 
 
 ## 문제
-보호소에서는 몇 시에 입양이 가장 활발하게 일어나는지 알아보려 합니다. 
-09:00부터 19:59까지, 각 시간대별로 입양이 몇 건이나 발생했는지 조회하는 SQL문을 작성해주세요. 
-이때 결과는 시간대 순으로 정렬해야 합니다.
+입양 게시판에 동물 정보를 게시하려 합니다. 
+동물의 생물 종, 이름, 성별 및 중성화 여부를 아이디 순으로 조회하는 SQL문을 작성해주세요. 
+이때 프로그래밍을 모르는 사람들은 NULL이라는 기호를 모르기 때문에, 
+이름이 없는 동물의 이름은 "No name"으로 표시해 주세요.
+
 
 ```oracle
-SELECT TO_NUMBER(TO_CHAR(datetime, 'HH24')) as hour, count(*) as count
-FROM animal_outs
-WHERE TO_CHAR(datetime, 'HH24:MI') BETWEEN '09:00' AND '19:59'
-GROUP BY TO_NUMBER(TO_CHAR(datetime, 'HH24'))
-ORDER BY hour
+SELECT animal_type, DECODE(name, null, 'No name', name), sex_upon_intake
+FROM animal_ins
+ORDER BY animal_id
 ```
