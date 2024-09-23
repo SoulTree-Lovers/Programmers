@@ -1,26 +1,26 @@
-# 카테고리 별 상품 개수 구하기
+# DATETIME에서 DATE로 형 변환
 
 ## 문제 설명
-다음은 어느 의류 쇼핑몰에서 판매중인 상품들의 정보를 담은 PRODUCT 테이블입니다. PRODUCT 테이블은 아래와 같은 구조로 되어있으며, PRODUCT_ID, PRODUCT_CODE, PRICE는 각각 상품 ID, 상품코드, 판매가를 나타냅니다.
+ANIMAL_INS 테이블은 동물 보호소에 들어온 동물의 정보를 담은 테이블입니다. ANIMAL_INS 테이블 구조는 다음과 같으며, ANIMAL_ID, ANIMAL_TYPE, DATETIME, INTAKE_CONDITION, NAME, SEX_UPON_INTAKE는 각각 동물의 아이디, 생물 종, 보호 시작일, 보호 시작 시 상태, 이름, 성별 및 중성화 여부를 나타냅니다.
 
-| Column name   | Type       | Nullable |
-|---------------|------------|----------|
-| PRODUCT_ID    | INTEGER    | FALSE    |
-| PRODUCT_CODE  | VARCHAR(8) | FALSE    |
-| PRICE         | INTEGER    | FALSE    |
-
-상품 별로 중복되지 않는 8자리 상품코드 값을 가지며, 앞 2자리는 카테고리 코드를 의미합니다.
-
+| NAME             | TYPE        | NULLABLE |
+|------------------|-------------|----------|
+| ANIMAL_ID        | VARCHAR(N)  | FALSE    |
+| ANIMAL_TYPE      | VARCHAR(N)  | FALSE    |
+| DATETIME         | DATETIME    | FALSE    |
+| INTAKE_CONDITION | VARCHAR(N)  | FALSE    |
+| NAME             | VARCHAR(N)  | TRUE     |
+| SEX_UPON_INTAKE  | VARCHAR(N)  | FALSE    |
 
 
 ## 문제
-PRODUCT 테이블에서 상품 카테고리 코드(PRODUCT_CODE 앞 2자리) 별 상품 개수를 출력하는 SQL문을 작성해주세요. 
-결과는 상품 카테고리 코드를 기준으로 오름차순 정렬해주세요.
+ANIMAL_INS 테이블에 등록된 모든 레코드에 대해, 
+각 동물의 아이디와 이름, 들어온 날짜1를 조회하는 SQL문을 작성해주세요. 
+이때 결과는 아이디 순으로 조회해야 합니다.
 
 
 ```oracle
-SELECT substr(product_code, 1, 2) as category, count(*) as products
-FROM product
-GROUP BY substr(product_code, 1, 2)
-ORDER BY category
+SELECT animal_id, name, TO_CHAR(datetime, 'YYYY-MM-DD')
+FROM animal_ins
+ORDER BY animal_id
 ```
